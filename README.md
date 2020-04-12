@@ -2,7 +2,7 @@
 
 encoding/decoding RTCM messages
 
-1012
+1012, 1004
 
 Other in todo.
 
