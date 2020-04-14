@@ -12,7 +12,7 @@ func DecodeMessage (message string) interface{} {
 	crcReceived := message[len(message)-24:]
 	// REMOVE CRC
 	message = message[:len(message)-24]
-	crcCalculated := generateCRC(message)
+	crcCalculated := GenerateCRC(message)
 	if crcReceived != crcCalculated {
 		log.Fatalln("BAD CRC!!!!!")
 	}

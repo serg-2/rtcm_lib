@@ -8,7 +8,7 @@ import (
 const CRCSEED=0
 const CRCPOLY=0x1864CFB
 
-func crc24q_hash (data []byte) uint {
+func Crc24q_hash (data []byte) uint {
 
 	var crc uint
 	crc = 0
@@ -26,7 +26,7 @@ func crc24q_hash (data []byte) uint {
 	return crc
 }
 
-func generateCRC(string1 string) string {
+func GenerateCRC(string1 string) string {
 	var message []byte
 
 
@@ -40,7 +40,7 @@ func generateCRC(string1 string) string {
 	//fmt.Println("HASH:")
 	//fmt.Printf("%024b\n", crc24q_hash(message))
 
-	return fmt.Sprintf("%024b", crc24q_hash(message))
+	return fmt.Sprintf("%024b", Crc24q_hash(message))
 }
 
 func crcInit() [256]uint {

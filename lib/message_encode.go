@@ -68,7 +68,7 @@ func EncodeMessage (messageType int, messagePassed interface{})string {
 
 	encoded = encoded + length + body
 
-	crc := generateCRC(encoded)
+	crc := GenerateCRC(encoded)
 
 	encoded += crc
 
