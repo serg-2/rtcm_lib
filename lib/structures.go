@@ -141,10 +141,68 @@ type Type1004Parsed struct {
 
 }
 
+type Type1087Parsed struct {
+	//header part ------------------------
+	//Reference Station ID DF003 uint12 12
+	StationId		uint64
+	//GLONASS Day Of Week DF416 uint3 3
+	Day				uint64
+	//GLONASS Epoch Time (t k ) DF034 uint27 27
+	Epoch			uint64
+	//Multiple Message Bit DF393 bit(1) 1
+	MMB				uint64
+	//IODS – Issue of Data Station DF409 uint3 3
+	IODS			uint64
+	//Reserved DF001 bit(7) 7 (may be GNSS specific)
+
+	//Clock Steering Indicator DF411 uint2 2
+	CSI				uint64
+	// External Clock Indicator DF412 uint2 2
+	ECI				uint64
+	//GNSS Divergence-free Smoothing Indicator DF417 bit(1) 1
+	SIndi 			uint64
+	// GNSS Smoothing Interval DF418 bit(3) 3
+	SInter			uint64
+	//GNSS Satellite Mask DF394 bit(64) 64
+	SatMask			string
+	SatNumber		int
+	//GNSS Signal Mask DF395 bit(32) 32
+	SignalMask		string
+	SignalNumber	int
+	// GNSS Cell Mask DF396 bit(X) X (X≤64)
+	SatSignalTable	string
+
+	// satellites part ----------------------
+	Satellites		[]Type1087Satellite
+
+}
+
+
 type Type1004Satellite struct {
 	Ident			uint64
 	L1				Type1004L1
 	L2				Type1004L2
+}
+
+type Type1087Satellite struct {
+	RoughRangeInt		uint64
+	Info				uint64
+	RoughRangeRemainder	uint64
+	RoughPhaseRange		int64
+	// External from mask
+	SatelliteNumber		int
+	Signals				[]Type1087Signal
+}
+
+type Type1087Signal struct {
+	// GNSS signal fine Pseudoranges with extended resolution
+	RangeInt			int64
+	PhaseRange			int64
+	PhaseRangeTI		uint64
+	AI 					uint64
+	CNR					uint64
+	PhaseRangeRate		int64
+	SignalNumber		int
 }
 
 

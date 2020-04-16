@@ -439,3 +439,207 @@ func E_DF020 (num uint64) string {
 	// 8bits
 	return EUint(num, 8)
 }
+
+func D_DF393 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF393 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}
+
+func D_DF394 (field string) uint64 {
+	// 64bit
+	return DUint(field, 64)
+}
+
+func E_DF394 (num uint64) string {
+	// 64bit
+	return EUint(num, 64)
+}
+
+func D_DF395 (field string) uint64 {
+	// 32bit
+	return DUint(field, 32)
+}
+
+func E_DF395 (num uint64) string {
+	// 32bit
+	return EUint(num, 32)
+}
+
+func D_DF396 (field string) uint64 {
+	// NSat*Nsig bits
+	return DUint(field, len(field))
+}
+
+func E_DF396 (num uint64, tableSize int) string {
+	// NSat*Nsig bits
+	return EUint(num, tableSize)
+}
+
+func D_DF397 (field string) uint64 {
+	// 8bit
+	return DUint(field, 8)
+}
+
+func E_DF397 (num uint64) string {
+	// 8bit
+	return EUint(num, 8)
+}
+
+func D_DF398 (field string) uint64 {
+	// 10bit
+	return DUint(field, 10)
+}
+
+func E_DF398 (num uint64) string {
+	// 10bit
+	return EUint(num, 10)
+}
+
+func D_DF399 (field string) int64 {
+	// 14bits
+	result, _ := DInt(field, 14)
+	return result
+}
+
+func E_DF399 (num int64) string {
+	// 14bits
+	return EInt(num, 14, false)
+}
+
+func D_DF404 (field string) int64 {
+	// 15bits
+	result, _ := DInt(field, 15)
+	return result
+}
+
+func E_DF404 (num int64) string {
+	// 15bits
+	return EInt(num, 15, false)
+}
+
+func D_DF405 (field string) int64 {
+	// 20bits
+	result, _ := DInt(field, 20)
+	return result
+}
+
+func E_DF405 (num int64) string {
+	// 20bits
+	return EInt(num, 20, false)
+}
+
+func D_DF406 (field string) int64 {
+	// 24bits
+	result, _ := DInt(field, 24)
+	return result
+}
+
+func E_DF406 (num int64) string {
+	// 24bits
+	return EInt(num, 24, false)
+}
+
+func D_DF407 (field string) uint64 {
+	// 10bit
+	return DUint(field, 10)
+}
+
+func E_DF407 (num uint64) string {
+	// 10bit
+	return EUint(num, 10)
+}
+
+func D_DF408 (field string) uint64 {
+	// 10bit
+	return DUint(field, 10)
+}
+
+func E_DF408 (num uint64) string {
+	// 10bit
+	return EUint(num, 10)
+}
+
+
+func D_DF409 (field string) uint64 {
+	// 3bit
+	return DUint(field, 3)
+}
+
+func E_DF409 (num uint64) string {
+	// 3bit
+	return EUint(num, 3)
+}
+
+func D_DF411 (field string) uint64 {
+	// 2bit
+	return DUint(field, 2)
+}
+
+func E_DF411 (num uint64) string {
+	// 2bit
+	return EUint(num, 2)
+}
+
+func D_DF412 (field string) uint64 {
+	// 2bit
+	return DUint(field, 2)
+}
+
+func E_DF412 (num uint64) string {
+	// 2bit
+	return EUint(num, 2)
+}
+
+func D_DF416 (field string) uint64 {
+	// 3bit
+	return DUint(field, 3)
+}
+
+func E_DF416 (num uint64) string {
+	// 3bit
+	return EUint(num, 3)
+}
+
+func D_DF417 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF417 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}
+func D_DF418 (field string) uint64 {
+	// 3bit
+	return DUint(field, 3)
+}
+
+func E_DF418 (num uint64) string {
+	// 3bit
+	return EUint(num, 3)
+}
+
+func D_DF419 (field string) uint64 {
+	// 4bit
+	return DUint(field, 4)
+}
+
+func E_DF419 (num uint64) string {
+	// 4bit
+	return EUint(num, 4)
+}
+
+func D_DF420 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF420 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}

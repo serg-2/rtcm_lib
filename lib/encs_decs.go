@@ -154,6 +154,113 @@ func Decode_1004_header(message string) Type1004Header {
 	return info
 }
 
+func Decode_1087_header(info *Type1087Parsed, message string) uint64 {
+
+	info.StationId = D_DF003(message[:12])
+	message = message[12:]
+
+	info.Day = D_DF416(message[:3])
+	message = message[3:]
+
+	info.Epoch = D_DF034(message[:27])
+	message = message[27:]
+
+	info.MMB = D_DF393(message[:1])
+	message = message[1:]
+
+	info.IODS = D_DF409(message[:3])
+	message = message[3:]
+
+	//Reserved
+	message = message[7:]
+
+	info.CSI = D_DF411(message[:2])
+	message = message[2:]
+
+	info.ECI = D_DF412(message[:2])
+	message = message[2:]
+
+	info.SIndi = D_DF417(message[:1])
+	message = message[1:]
+
+	info.SInter = D_DF418(message[:3])
+	message = message[3:]
+
+	//info.SatMask = D_DF394(message[:64])
+	//info.SatNumber = OnesCount64(info.SatMask)
+	info.SatMask = message[:64]
+	info.SatNumber = OnesCount(info.SatMask)
+	message = message[64:]
+
+	//info.SignalMask = D_DF395(message[:32])
+	//info.SignalNumber = OnesCount32(uint32(info.SignalMask))
+	info.SignalMask = message[:32]
+	info.SignalNumber = OnesCount(info.SignalMask)
+
+	message = message[32:]
+
+	// GNSS Cell Mask  DF396 bit(X) X (X≤64)
+	// info.SatNumber*info.SignalNumber
+	//info.SatSignalTable = D_DF396(message[:info.SatNumber*info.SignalNumber])
+	info.SatSignalTable = message[:info.SatNumber*info.SignalNumber]
+
+	return 157 + uint64(info.SatNumber*info.SignalNumber)
+}
+
+func Decode_1087_satellite(message string, currentNumber int, quantSatellites int) Type1087Satellite {
+	var info Type1087Satellite
+	var shift int
+
+	// The number of integer milliseconds in GNSS Satellite rough ranges
+	info.RoughRangeInt = D_DF397(message[currentNumber*8:currentNumber*8+8])
+	shift += 8*quantSatellites
+
+	//Extended Satellite Information
+	//GLONASS Satellite Frequency Channel Number (DF419) is used as extended satellite information
+	// in the header of MSM7
+	info.Info = D_DF419(message[shift+currentNumber*4:shift+currentNumber*4+4])
+	shift += 4*quantSatellites
+
+	// GNSS Satellite rough ranges modulo 1 millisecond
+	info.RoughRangeRemainder = D_DF398(message[shift+currentNumber*10:shift+currentNumber*10+10])
+	shift += 10*quantSatellites
+
+	//GNSS Satellite rough PhaseRangeRates
+	info.RoughPhaseRange = D_DF399(message[shift+currentNumber*14:shift+currentNumber*14+14])
+
+	return info
+}
+
+func Decode_1087_signal(message string, currentNumber int, quantSignals int) Type1087Signal {
+	var info Type1087Signal
+	var shift int
+
+	// GNSS signal fine Pseudoranges with extended resolution
+	info.RangeInt = D_DF405(message[currentNumber*20:currentNumber*20+20])
+	shift += 20*quantSignals
+
+	//GNSS signal fine PhaseRange data with extended resolution
+	info.PhaseRange = D_DF406(message[shift+currentNumber*24:shift+currentNumber*24+24])
+	shift += 24*quantSignals
+
+	// GNSS PhaseRange Lock Time Indicator with extended range and resolution.
+	info.PhaseRangeTI = D_DF407(message[shift+currentNumber*10:shift+currentNumber*10+10])
+	shift += 10*quantSignals
+
+	//Half-cycle ambiguity indicator
+	info.AI = D_DF420(message[shift+currentNumber*1:shift+currentNumber*1+1])
+	shift += 1*quantSignals
+
+	//GNSS signal CNRs with extended resolution
+	info.CNR = D_DF408(message[shift+currentNumber*10:shift+currentNumber*10+10])
+	shift += 10*quantSignals
+
+	//GNSS signal fine PhaseRangeRates
+	info.PhaseRangeRate = D_DF404(message[shift+currentNumber*15:shift+currentNumber*15+15])
+
+	return info
+}
+
 //=== COMMON===================================
 
 func Decode_CommonHeader(message string) int {

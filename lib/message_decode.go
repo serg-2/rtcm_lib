@@ -12,6 +12,7 @@ func DecodeMessage (message string) interface{} {
 	crcReceived := message[len(message)-24:]
 	// REMOVE CRC
 	message = message[:len(message)-24]
+
 	crcCalculated := GenerateCRC(message)
 	if crcReceived != crcCalculated {
 		log.Fatalln("BAD CRC!!!!!")
@@ -96,6 +97,91 @@ func DecodeMessage (message string) interface{} {
 		}
 
 		result = messageDict
+	case 1077:
+		log.Println("Received message type: 1077")
+		//log.Printf("1077 type received\n")
+	case 1087:
+		var messageDict Type1087Parsed
+		var satelliteDict Type1087Satellite
+		var signalDict Type1087Signal
+		var signalTable []int
+
+		//log.Printf("1087 type received")
+		//log.Printf("Length: %v\n", length)
+		// Header part
+		lengthToCut := Decode_1087_header(&messageDict, message)
+		message=message[lengthToCut:]
+		//Print_json(messageDict)
+
+		// Satellite part (36bit * Number of Satellites)
+		for i:=0; i < int(messageDict.SatNumber); i++ {
+			satelliteDict = Decode_1087_satellite(message, i, int(messageDict.SatNumber))
+			//Print_json(satelliteDict)
+
+
+			// Editing satellites
+			satFound := 0
+			currentSatNumber := 0
+			for j:= 0; j < 64; j++ {
+				if string(messageDict.SatMask[j]) == "0" {continue}
+				currentSatNumber = j + 1
+				satFound++
+				if satFound == i + 1 {
+					break
+				}
+			}
+			satelliteDict.SatelliteNumber = currentSatNumber
+
+			messageDict.Satellites = append(messageDict.Satellites, satelliteDict)
+
+		}
+		//Print_json(messageDict)
+		message=message[36*messageDict.SatNumber:]
+
+		/*
+		// Output Signal to Satellite table
+		for k:= 0; k < messageDict.SignalNumber; k++ {
+			fmt.Printf("For signal number %v Satellite table: %v\n", k+1, messageDict.SatSignalTable[messageDict.SatNumber*k:messageDict.SatNumber*k+messageDict.SatNumber])
+		}
+		*/
+
+		// Generate signal table
+		for k:=0; k < len(messageDict.SignalMask); k++ {
+			if string(messageDict.SignalMask[k]) == "1" {
+				signalTable = append(signalTable, k+1)
+			}
+		}
+		//log.Printf("Signal Mask: %v\n", messageDict.SignalMask)
+		//log.Printf("Signal table: %v\n", signalTable)
+
+		// Signal part ()
+		for i:=0; i < int(messageDict.SignalNumber*messageDict.SatNumber); i++ {
+			// Skip empty signal
+			if string(messageDict.SatSignalTable[i]) == "0" {continue}
+			signalIndex := i/messageDict.SatNumber
+			satelliteIndex := i-(i/messageDict.SatNumber)*messageDict.SatNumber
+			//fmt.Printf("Signal index: %v Satellite index: %v\n",signalIndex, satelliteIndex)
+
+			signalDict = Decode_1087_signal(message, i, int(messageDict.SatNumber*messageDict.SignalNumber))
+			// Update signal with signal number
+			signalDict.SignalNumber = signalTable[signalIndex]
+
+			// Put signal to satellite
+			messageDict.Satellites[satelliteIndex].Signals = append(messageDict.Satellites[satelliteIndex].Signals, signalDict)
+
+		}
+		message=message[80*messageDict.SignalNumber*messageDict.SatNumber:]
+
+		// Final check
+		if len(message) >=8 {
+			log.Println("Bad message filling to end of byte received. Message Type 1087")
+			log.Println(message)
+		}
+
+		// Finish
+		result = messageDict
+	default:
+		log.Printf("Received message type: %v\n", messageType)
 
 	}
 
