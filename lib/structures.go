@@ -73,6 +73,12 @@ type specialInt64 struct {
 	Special		bool
 }
 
+type specialUint64 struct {
+	Value		uint64
+	Special		bool
+}
+
+
 type specialfloat64 struct {
 	Value 		float64
 	Special 	bool
@@ -141,7 +147,7 @@ type Type1004Parsed struct {
 
 }
 
-type Type1087Parsed struct {
+type Type1087 struct {
 	//header part ------------------------
 	//Reference Station ID DF003 uint12 12
 	StationId		uint64
@@ -152,6 +158,9 @@ type Type1087Parsed struct {
 	//Multiple Message Bit DF393 bit(1) 1
 	MMB				uint64
 	//IODS – Issue of Data Station DF409 uint3 3
+	//This field is reserved to be used to link MSM with future site-
+	//description (receiver, antenna description, etc.) messages.
+	//A value of “0” indicates that this field is not utilized.
 	IODS			uint64
 	//Reserved DF001 bit(7) 7 (may be GNSS specific)
 
@@ -177,6 +186,64 @@ type Type1087Parsed struct {
 
 }
 
+type Type1087Parsed struct {
+
+	//Reference Station ID DF003 uint12 12
+	StationId		uint64
+	//GLONASS Day Of Week DF416 uint3 3
+	Day				uint64
+	//GLONASS Epoch Time (t k ) DF034 uint27 27
+	Epoch			uint64
+	//Multiple Message Bit DF393 bit(1) 1
+	// NOT USED
+	//IODS – Issue of Data Station DF409 uint3 3
+	// NOT USED
+	//Reserved DF001 bit(7) 7 (may be GNSS specific)
+	// NOT USED
+	//Clock Steering Indicator DF411 uint2 2 CONVERTED TO MESSAGE
+	CSI				string
+	// External Clock Indicator DF412 uint2 2 CONVERTED TO MESSAGE
+	ECI				string
+	//GNSS Divergence-free Smoothing Indicator DF417 bit(1) 1 CONVERTED TO MESSAGE
+	SIndi 			string
+	// GNSS Smoothing Interval DF418 bit(3) 3 CONVERTED TO MESSAGE
+	SInter			string
+
+	// satellites part ----------------------
+	Satellites		[]Type1087SatelliteParsed
+
+}
+
+type Type1087SatelliteParsed struct {
+
+	//DF397
+	//The number of integer
+	//milliseconds in GNSS
+	//Satellite rough ranges
+	//RoughRangeInt		specialUint64
+
+	//DF398
+	//GNSS Satellite rough ranges modulo 1 millisecond
+	//RoughRangeRemainder	uint64
+
+	// Specific for each GNSS
+	// DF419 For GLONASS DECODED to INT
+
+	Info				int
+
+	// NEW VALUE As SUM of Int and remainder
+	RoughRange			specialfloat64
+
+	// DF399
+	// GNSS Satellite rough PhaseRangeRates CONVERTED from int
+	RoughPhaseRange		specialInt64
+
+	SatelliteNumber		int
+
+	L1 					Type1087L1
+	L2 					Type1087L2
+}
+
 
 type Type1004Satellite struct {
 	Ident			uint64
@@ -188,7 +255,7 @@ type Type1087Satellite struct {
 	RoughRangeInt		uint64
 	Info				uint64
 	RoughRangeRemainder	uint64
-	RoughPhaseRange		int64
+	RoughPhaseRange		specialInt64
 	// External from mask
 	SatelliteNumber		int
 	Signals				[]Type1087Signal
@@ -196,15 +263,38 @@ type Type1087Satellite struct {
 
 type Type1087Signal struct {
 	// GNSS signal fine Pseudoranges with extended resolution
-	RangeInt			int64
-	PhaseRange			int64
+	RangeInt			specialInt64
+	PhaseRange			specialInt64
 	PhaseRangeTI		uint64
 	AI 					uint64
 	CNR					uint64
-	PhaseRangeRate		int64
+	PhaseRangeRate		specialInt64
 	SignalNumber		int
 }
 
+type Type1087L1 struct {
+	// GNSS signal fine Pseudoranges with extended resolution
+	RangeInt			specialfloat64
+	PhaseRange			specialfloat64
+	PhaseRangeTI		uint64
+	AI 					string
+	CNR					float64
+	PhaseRangeRate		specialfloat64
+	// Added from UP
+	Signal				string
+}
+
+type Type1087L2 struct {
+	// GNSS signal fine Pseudoranges with extended resolution
+	RangeInt			specialfloat64
+	PhaseRange			specialfloat64
+	PhaseRangeTI		uint64
+	AI 					string
+	CNR					float64
+	PhaseRangeRate		specialfloat64
+	// Added from UP
+	Signal				string
+}
 
 type Type1012Satellite struct {
 	//GLONASS Satellite ID (Satellite Slot Number) DF038 uint6 6

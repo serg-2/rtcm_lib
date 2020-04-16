@@ -121,6 +121,368 @@ func Parse_1012(info Type1012) Type1012Satellite {
 	return result
 }
 
+func parse_1087Satellite(info Type1087Satellite) Type1087SatelliteParsed {
+	var result Type1087SatelliteParsed
+	var RoughRangeInt specialUint64
+	// RoughRangeInt
+	// DF397
+	// Rough range can be used to restore complete observables for a given
+	//satellite. Rough range takes 18 bits which are split between two fields
+	//(DF397 and DF398). This field contains the integer number of
+	//milliseconds in the satellite rough range.
+	//A bit pattern equivalent to FFh (255 ms) indicates invalid value.
+	if info.RoughRangeInt == 255 {
+		RoughRangeInt.Special = true
+		RoughRangeInt.Value = 0
+	} else {
+		RoughRangeInt.Special = false
+		RoughRangeInt.Value = info.RoughRangeInt
+	}
+
+	// Info
+	// The GLONASS Satellite Frequency Channel Number identifies the
+	//frequency of the GLONASS satellite.
+	// DF Value || No of channel ||Nominal value of frequency in L1 Band, MHz || Nominal value of frequency in L2 Band, MHz
+	//0 -7 1598.0625 	1242.9375
+	//1 -6 1598.6250 	1243.3750
+	//2 -5 1599.1875 	1243.8125
+	//3 -4 1599.7500 	1244.2500
+	//4 -3 1600.3125	1244.6875
+	//5 -2 1600.8750 	1245.1250
+	//6 -1 1601.4375 	1245.5625
+	//7	 0 1602.0 		1246.0
+	//8	 1 1602.5625 	1246.4375
+	//9	 2 1603.125 	1246.875
+	//10 3 1603.6875 	1247.3125
+	//11 4 1604.25 		1247.75
+	//12 5 1604.8125 	1248.1875
+	//13 6 1605.375 	1248.625
+	result.Info = int(info.Info) - 7
+
+	// DF398
+	//RoughRangeRemainder
+	//See the note above. Allows restoring full rough range with accuracy 1/1024 ms (about 300 m).
+
+	RoughRangeRemainder := float64(info.RoughRangeRemainder) * math.Pow(2,-10)
+
+	//Calculating RoughRange
+	if RoughRangeInt.Special {
+		result.RoughRange.Special = true
+		result.RoughRange.Value = 0
+	} else {
+		result.RoughRange.Special = false
+		result.RoughRange.Value = float64(RoughRangeInt.Value) + RoughRangeRemainder
+	}
+
+	//RoughPhaseRange
+	// DF399
+	result.RoughPhaseRange = info.RoughPhaseRange
+
+	// SatelliteNumber
+	result.SatelliteNumber = info.SatelliteNumber
+
+	// Signal mapping
+	// Signal ID DF395 || Frequency Band || Signal
+	// 2		G1		C/A
+	// 3		G1		P
+	// 8		G2		C/A
+	// 9		G2		P
+	for _, signal := range info.Signals {
+		if signal.SignalNumber == 2 || signal.SignalNumber == 3 {
+			result.L1 = parse_1087SignalsL1(signal)
+		}
+		if signal.SignalNumber == 8 || signal.SignalNumber == 9 {
+			result.L2 = parse_1087SignalsL2(signal)
+		}
+	}
+
+	return result
+}
+
+
+func parse_1087SignalsL1(info Type1087Signal) Type1087L1 {
+	var result Type1087L1
+
+	//RangeInt
+	//DF405
+	if info.RangeInt.Special {
+		result.RangeInt.Special = true
+		result.RangeInt.Value = 0
+	} else {
+		result.RangeInt.Special = false
+		result.RangeInt.Value = float64(info.RangeInt.Value) * math.Pow(2,-29)
+	}
+
+	//PhaseRange
+	//DF406
+	if info.PhaseRange.Special {
+		result.PhaseRange.Special = true
+		result.PhaseRange.Value = 0
+	} else {
+		result.PhaseRange.Special = false
+		result.PhaseRange.Value = float64(info.PhaseRange.Value) * math.Pow(2,-31)
+	}
+
+	//PhaseRangeTI
+	//DF407
+	// Indicator (i) || Minimum Lock Time (s) || Range of Indicated Lock Times
+	//0-23 		i 					0 < lock time < 24
+	//24-47 	i * 2 - 24 			24 ≤ lock time < 72
+	//48-71 	i * 4 - 120 		72 ≤ lock time < 168
+	//72-95 	i * 8 - 408 		168 ≤ lock time < 360
+	//96-119 	i * 16 - 1176 		360 ≤ lock time < 744
+	//120-126 	i * 32 - 3096 		744 ≤ lock time < 937
+	//127 		--- 				lock time >= 937
+	result.PhaseRangeTI = info.PhaseRangeTI
+
+	//AI
+	//DF420
+	// 0 – No half-cycle ambiguity.
+	//1 – Half-cycle ambiguity
+	//When transmitting PhaseRange with unresolved polarity encoding
+	//software shall set this bit to 1. Receiving software that is not capable of
+	//handling half-cycle ambiguities shall skip such PhaseRange
+	//observables. If polarity resolution forced PhaseRange to be corrected by
+	//half-a-cycle, then the associated GNSS PhaseRange Lock Time
+	//Indicator (DF402, DF407) must be reset to zero, indicating that despite
+	//continuous tracking the final PhaseRange experienced non-continuity.
+
+	switch info.AI{
+	case 0:
+		result.AI = "No half-cycle ambiguity."
+	case 1:
+		result.AI = "Half-cycle ambiguity"
+	}
+
+	//CNR
+	//DF408
+	// A value “0” indicates that the CNR measurement has not been
+	//computed, or is not available.
+	//Availability or unavailability of the CNR does not affect validity of
+	//other observables.
+	result.CNR = float64(info.CNR) * math.Pow(2,-4)
+
+	//PhaseRangeRate
+	//DF404
+	//Fine Phase Range Rate for a given signal. Full Phase Range Rate is the
+	//sum of this field and the Satellite Rough Phase Range Rate (DF399).
+	//A bit pattern equivalent to 4000h (–1.6384 m/s) indicates invalid value
+	// m/s
+	if info.PhaseRangeRate.Special {
+		result.PhaseRangeRate.Special = true
+		result.PhaseRangeRate.Value = 0
+	} else {
+		result.PhaseRangeRate.Special = false
+		result.PhaseRangeRate.Value = float64(info.PhaseRangeRate.Value) * 0.0001
+	}
+
+
+	switch info.SignalNumber{
+	case 2:
+		result.Signal = "C/A"
+	case 3:
+		result.Signal = "P"
+	}
+
+	return result
+
+}
+
+
+func parse_1087SignalsL2(info Type1087Signal) Type1087L2 {
+	var result Type1087L2
+
+	//RangeInt
+	//DF405
+	if info.RangeInt.Special {
+		result.RangeInt.Special = true
+		result.RangeInt.Value = 0
+	} else {
+		result.RangeInt.Special = false
+		result.RangeInt.Value = float64(info.RangeInt.Value) * math.Pow(2,-29)
+	}
+
+	//PhaseRange
+	//DF406
+	if info.PhaseRange.Special {
+		result.PhaseRange.Special = true
+		result.PhaseRange.Value = 0
+	} else {
+		result.PhaseRange.Special = false
+		result.PhaseRange.Value = float64(info.PhaseRange.Value) * math.Pow(2,-31)
+	}
+
+	//PhaseRangeTI
+	//DF407
+	// Indicator (i) || Minimum Lock Time (s) || Range of Indicated Lock Times
+	//0-23 		i 					0 < lock time < 24
+	//24-47 	i * 2 - 24 			24 ≤ lock time < 72
+	//48-71 	i * 4 - 120 		72 ≤ lock time < 168
+	//72-95 	i * 8 - 408 		168 ≤ lock time < 360
+	//96-119 	i * 16 - 1176 		360 ≤ lock time < 744
+	//120-126 	i * 32 - 3096 		744 ≤ lock time < 937
+	//127 		--- 				lock time >= 937
+	result.PhaseRangeTI = info.PhaseRangeTI
+
+	//AI
+	//DF420
+	// 0 – No half-cycle ambiguity.
+	//1 – Half-cycle ambiguity
+	//When transmitting PhaseRange with unresolved polarity encoding
+	//software shall set this bit to 1. Receiving software that is not capable of
+	//handling half-cycle ambiguities shall skip such PhaseRange
+	//observables. If polarity resolution forced PhaseRange to be corrected by
+	//half-a-cycle, then the associated GNSS PhaseRange Lock Time
+	//Indicator (DF402, DF407) must be reset to zero, indicating that despite
+	//continuous tracking the final PhaseRange experienced non-continuity.
+
+	switch info.AI{
+	case 0:
+		result.AI = "No half-cycle ambiguity."
+	case 1:
+		result.AI = "Half-cycle ambiguity"
+	}
+
+	//CNR
+	//DF408
+	// A value “0” indicates that the CNR measurement has not been
+	//computed, or is not available.
+	//Availability or unavailability of the CNR does not affect validity of
+	//other observables.
+	result.CNR = float64(info.CNR) * math.Pow(2,-4)
+
+	//PhaseRangeRate
+	//DF404
+	//Fine Phase Range Rate for a given signal. Full Phase Range Rate is the
+	//sum of this field and the Satellite Rough Phase Range Rate (DF399).
+	//A bit pattern equivalent to 4000h (–1.6384 m/s) indicates invalid value
+	// m/s
+	if info.PhaseRangeRate.Special {
+		result.PhaseRangeRate.Special = true
+		result.PhaseRangeRate.Value = 0
+	} else {
+		result.PhaseRangeRate.Special = false
+		result.PhaseRangeRate.Value = float64(info.PhaseRangeRate.Value) * 0.0001
+	}
+
+
+	switch info.SignalNumber{
+	case 8:
+		result.Signal = "C/A"
+	case 9:
+		result.Signal = "P"
+	}
+
+	return result
+
+}
+
+
+func Parse_1087(info Type1087) Type1087Parsed {
+	var result Type1087Parsed
+
+	//The Reference Station ID is determined by the service provider. Its
+	//primary purpose is to link all message data to their unique source.
+	result.StationId = info.StationId
+
+	//0 – Sunday
+	//1 – Monday
+	//2 – Tuesday
+	//3 – Wednesday
+	//4 – Thursday
+	//5 – Friday
+	//6 – Saturday
+	//7 – The day of week is not known
+	result.Day = info.Day
+
+	//GLONASS Epoch Time of measurement is defined by the GLONASS
+	//ICD as UTC(SU) + 3.0 hours. It rolls over at 86,400 seconds for
+	//GLONASS, except for the leap second, where it rolls over at 86,401.
+	// in ms.
+	result.Epoch = info.Epoch
+
+	//CSI
+	//0 – clock steering is not applied
+	//In this case receiver clock must be kept in the range of ± 1 ms
+	//(approximately ± 300 km)
+	//1 – clock steering has been applied
+	//In this case receiver clock must be kept in the range of ± 1 microsecond
+	//(approximately ± 300 meters).
+	//2 – unknown clock steering status
+	//3 – reserved
+	switch info.CSI {
+	case 0:
+		result.CSI = "clock steering is not applied"
+	case 1:
+		result.CSI = "clock steering has been applied"
+	case 2:
+		result.CSI = "unknown clock steering status"
+	case 3:
+		result.CSI = "clock steering RESERVED status"
+	}
+
+	//ECI
+	//0 – internal clock is used
+	//1 – external clock is used, clock status is “locked”
+	//2 – external clock is used, clock status is “not locked”, which may
+	//indicate external clock failure and that the transmitted data may not be
+	//reliable.
+	//3 – unknown clock is used
+	switch info.ECI {
+	case 0:
+		result.ECI = "internal clock is used"
+	case 1:
+		result.ECI = "external clock is used, clock status is “locked”"
+	case 2:
+		result.ECI = "external clock is used, clock status is “not locked”"
+	case 3:
+		result.ECI = "unknown clock is used"
+	}
+
+	// Sindi
+	// 1 – Divergence-free smoothing is used
+	// 0 – Other type of smoothing is used
+	switch info.SIndi {
+	case 0:
+		result.SIndi = "Other type of smoothing is used"
+	case 1:
+		result.SIndi = "Divergence-free smoothing is used"
+	}
+
+	// SInter
+	// The GNSS Smoothing Interval is the integration period over which the
+	//pseudorange code phase measurements are averaged using carrier phase
+	//information.
+	//Divergence-free smoothing may be continuous over the entire period
+	//for which the satellite is visible.
+	//Notice: A value of zero indicates no smoothing is used.
+	//
+	switch info.SInter {
+	case 0:
+		result.SInter = "No smoothing is used"
+	case 1:
+		result.SInter = "Smoothing < 30 s"
+	case 2:
+		result.SInter = "Smoothing 30-60 s"
+	case 3:
+		result.SInter = "Smoothing 1-2 min"
+	case 4:
+		result.SInter = "Smoothing 2-4 min"
+	case 5:
+		result.SInter = "Smoothing 4-8 min"
+	case 6:
+		result.SInter = "Smoothing >8 min"
+	case 7:
+		result.SInter = "Unlimited smoothing interval"
+	}
+
+	for _, satellite := range info.Satellites {
+		result.Satellites = append(result.Satellites, parse_1087Satellite(satellite))
+	}
+
+	return result
+}
+
 func Parse_1004(info Type1004) Type1004Satellite {
 	var result Type1004Satellite
 

@@ -98,10 +98,10 @@ func DecodeMessage (message string) interface{} {
 
 		result = messageDict
 	case 1077:
-		log.Println("Received message type: 1077")
-		//log.Printf("1077 type received\n")
+		//log.Println("Received message type: 1077")
+
 	case 1087:
-		var messageDict Type1087Parsed
+		var messageDict Type1087
 		var satelliteDict Type1087Satellite
 		var signalDict Type1087Signal
 		var signalTable []int
@@ -178,8 +178,10 @@ func DecodeMessage (message string) interface{} {
 			log.Println(message)
 		}
 
+		result2 := Parse_1087(messageDict)
+
 		// Finish
-		result = messageDict
+		result = result2
 	default:
 		log.Printf("Received message type: %v\n", messageType)
 

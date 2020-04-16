@@ -154,7 +154,7 @@ func Decode_1004_header(message string) Type1004Header {
 	return info
 }
 
-func Decode_1087_header(info *Type1087Parsed, message string) uint64 {
+func Decode_1087_header(info *Type1087, message string) uint64 {
 
 	info.StationId = D_DF003(message[:12])
 	message = message[12:]

@@ -500,48 +500,49 @@ func E_DF398 (num uint64) string {
 	return EUint(num, 10)
 }
 
-func D_DF399 (field string) int64 {
+func D_DF399 (field string) specialInt64 {
 	// 14bits
-	result, _ := DInt(field, 14)
-	return result
+	result, special :=  DInt(field, 14)
+	return specialInt64{result,special}
 }
 
-func E_DF399 (num int64) string {
+func E_DF399 (num specialInt64) string {
 	// 14bits
-	return EInt(num, 14, false)
+	return EInt(num.Value, 14, num.Special)
 }
 
-func D_DF404 (field string) int64 {
+func D_DF404 (field string) specialInt64 {
 	// 15bits
-	result, _ := DInt(field, 15)
-	return result
+	result, special :=  DInt(field, 15)
+	return specialInt64{result,special}
 }
 
-func E_DF404 (num int64) string {
+func E_DF404 (num specialInt64) string {
 	// 15bits
-	return EInt(num, 15, false)
+	return EInt(num.Value, 15, num.Special)
 }
 
-func D_DF405 (field string) int64 {
+
+func D_DF405 (field string) specialInt64 {
 	// 20bits
-	result, _ := DInt(field, 20)
-	return result
+	result, special :=  DInt(field, 20)
+	return specialInt64{result,special}
 }
 
-func E_DF405 (num int64) string {
+func E_DF405 (num specialInt64) string {
 	// 20bits
-	return EInt(num, 20, false)
+	return EInt(num.Value, 20, num.Special)
 }
 
-func D_DF406 (field string) int64 {
+func D_DF406 (field string) specialInt64 {
 	// 24bits
-	result, _ := DInt(field, 24)
-	return result
+	result, special :=  DInt(field, 24)
+	return specialInt64{result,special}
 }
 
-func E_DF406 (num int64) string {
+func E_DF406 (num specialInt64) string {
 	// 24bits
-	return EInt(num, 24, false)
+	return EInt(num.Value, 24, num.Special)
 }
 
 func D_DF407 (field string) uint64 {
