@@ -29,6 +29,7 @@ func EncodeMessage (messageType int, messagePassed interface{})string {
 		// Add Header 1012
 		preparedHeader := Prepare_1012_header(message)
 		header_1012 := Encode_CommonHeader(1012) + Endode_1012_Header(preparedHeader)
+		//log.Println("Header encoded...")
 
 		body = header_1012 + body
 

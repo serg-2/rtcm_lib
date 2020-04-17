@@ -75,7 +75,8 @@ func Parse_1012(info Type1012) Type1012Satellite {
 	//
 	// In gpsdecode:
 	// "amb":info.L1MA,
-	result.L1.Amb=float64(info.L1MA)*599584.916 // for Meters
+	//result.L1.Amb=float64(info.L1MA)*599584.916 // for Meters
+	result.L1.Amb=info.L1MA
 
 	// L1 CNR measurements provide the reference station's
 	//estimate of the carrier-to-noise ratio of the satellite’s signal in dB-Hz.
@@ -457,6 +458,7 @@ func Parse_1087(info Type1087) Type1087Parsed {
 	//for which the satellite is visible.
 	//Notice: A value of zero indicates no smoothing is used.
 	//
+	/*
 	switch info.SInter {
 	case 0:
 		result.SInter = "No smoothing is used"
@@ -474,7 +476,8 @@ func Parse_1087(info Type1087) Type1087Parsed {
 		result.SInter = "Smoothing >8 min"
 	case 7:
 		result.SInter = "Unlimited smoothing interval"
-	}
+	} */
+	result.SInter = info.SInter
 
 	for _, satellite := range info.Satellites {
 		result.Satellites = append(result.Satellites, parse_1087Satellite(satellite))
@@ -623,7 +626,8 @@ func Prepare_1012(info Type1012Satellite) Type1012 {
 
 	result.L1Lt = info.L1.Lockt
 
-	result.L1MA = uint64(math.Round(info.L1.Amb / 599584.916))
+	//result.L1MA = uint64(math.Round(info.L1.Amb / 599584.916))
+	result.L1MA = info.L1.Amb
 
 	result.L1CNR = uint64(math.Round(info.L1.CNR / 0.25))
 

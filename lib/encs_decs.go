@@ -4,15 +4,20 @@ import (
 	"fmt"
 )
 
-func Endode_1012(info Type1012) string{
-	return E_DF038(info.SSN) + E_DF039(info.L1ci) +
-		E_DF040(info.SFCN) + E_DF041(info.L1PR) +
-		E_DF042(info.L1dPR) + E_DF043(info.L1Lt) +
-		E_DF044(info.L1MA) + E_DF045(info.L1CNR) +
-		E_DF046(info.L2CI) + E_DF047(info.L2PR) +
-		E_DF048(info.L2dPR) + E_DF049(info.L2Lt) +
-		E_DF050(info.L2CNR)
+func Endode_1012(info Type1012) string {
+	var result string
+	result = E_DF038(info.SSN) + E_DF039(info.L1ci)
+	result += E_DF040(info.SFCN) + E_DF041(info.L1PR)
+	result += E_DF042(info.L1dPR)
+	result += E_DF043(info.L1Lt)
+	result += E_DF044(info.L1MA) + E_DF045(info.L1CNR)
+	result += E_DF046(info.L2CI) + E_DF047(info.L2PR)
+	result += E_DF048(info.L2dPR) + E_DF049(info.L2Lt)
+	result += E_DF050(info.L2CNR)
+
+	return result
 }
+
 
 func Endode_1004(info Type1004) string{
 	var result string

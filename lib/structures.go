@@ -79,7 +79,7 @@ type specialUint64 struct {
 }
 
 
-type specialfloat64 struct {
+type Specialfloat64 struct {
 	Value 		float64
 	Special 	bool
 }
@@ -206,8 +206,8 @@ type Type1087Parsed struct {
 	ECI				string
 	//GNSS Divergence-free Smoothing Indicator DF417 bit(1) 1 CONVERTED TO MESSAGE
 	SIndi 			string
-	// GNSS Smoothing Interval DF418 bit(3) 3 CONVERTED TO MESSAGE
-	SInter			string
+	// GNSS Smoothing Interval DF418 bit(3) 3
+	SInter			uint64
 
 	// satellites part ----------------------
 	Satellites		[]Type1087SatelliteParsed
@@ -232,7 +232,7 @@ type Type1087SatelliteParsed struct {
 	Info				int
 
 	// NEW VALUE As SUM of Int and remainder
-	RoughRange			specialfloat64
+	RoughRange			Specialfloat64
 
 	// DF399
 	// GNSS Satellite rough PhaseRangeRates CONVERTED from int
@@ -274,24 +274,24 @@ type Type1087Signal struct {
 
 type Type1087L1 struct {
 	// GNSS signal fine Pseudoranges with extended resolution
-	RangeInt			specialfloat64
-	PhaseRange			specialfloat64
+	RangeInt			Specialfloat64
+	PhaseRange			Specialfloat64
 	PhaseRangeTI		uint64
 	AI 					string
 	CNR					float64
-	PhaseRangeRate		specialfloat64
+	PhaseRangeRate		Specialfloat64
 	// Added from UP
 	Signal				string
 }
 
 type Type1087L2 struct {
 	// GNSS signal fine Pseudoranges with extended resolution
-	RangeInt			specialfloat64
-	PhaseRange			specialfloat64
+	RangeInt			Specialfloat64
+	PhaseRange			Specialfloat64
 	PhaseRangeTI		uint64
 	AI 					string
 	CNR					float64
-	PhaseRangeRate		specialfloat64
+	PhaseRangeRate		Specialfloat64
 	// Added from UP
 	Signal				string
 }
@@ -311,11 +311,11 @@ type Type1012L1 struct {
 	//GLONASS L1 Pseudorange DF041 uint25 25
 	Prange		float64
 	//GLONASS L1 PhaseRange – L1 Pseudorange DF042 int20 20
-	Delta		specialfloat64
+	Delta		Specialfloat64
 	//GLONASS L1 Lock time Indicator DF043 uint7 7
 	Lockt		uint64
 	//GLONASS Integer L1 Pseudorange Modulus Ambiguity DF044 uint7 7
-	Amb			float64
+	Amb			uint64
 	//GLONASS L1 CNR DF045 uint8 8
 	CNR			float64
 }
@@ -324,9 +324,9 @@ type Type1004L1 struct {
 	//
 	Ind			uint64
 	//
-	Prange		specialfloat64
+	Prange		Specialfloat64
 	//
-	Delta		specialfloat64
+	Delta		Specialfloat64
 	//
 	Lockt		uint64
 	//
@@ -341,9 +341,9 @@ type Type1012L2 struct {
 	//GLONASS L2 Code Indicator DF046 bit(2) 2
 	Ind			uint64
 	//GLONASS L2-L1 Pseudorange Difference DF047 uint14 14
-	Prange		specialfloat64
+	Prange		Specialfloat64
 	//GLONASS L2 PhaseRange – L1 Pseudorange DF048 int20 20
-	Delta		specialfloat64
+	Delta		Specialfloat64
 	//GLONASS L2 Lock time Indicator DF049 uint7 7
 	Lockt		uint64
 	//GLONASS L2 CNR DF050 uint8 8
@@ -354,9 +354,9 @@ type Type1004L2 struct {
 	//
 	Ind			uint64
 	//
-	Prange		specialfloat64
+	Prange		Specialfloat64
 	//
-	Delta		specialfloat64
+	Delta		Specialfloat64
 	//
 	Lockt		uint64
 	//
