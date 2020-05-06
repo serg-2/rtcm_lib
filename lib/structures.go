@@ -242,6 +242,12 @@ type Type1087SatelliteParsed struct {
 
 	L1 					Type1087L1
 	L2 					Type1087L2
+
+	// Additional
+	RealPseudorangeL1	Specialfloat64
+	RealPseudorangeL2	Specialfloat64
+	RealPhaserangeL1	Specialfloat64
+	RealPhaserangeL2	Specialfloat64
 }
 
 
@@ -270,6 +276,7 @@ type Type1087Signal struct {
 	CNR						uint64
 	RatePhaseRangeRemainder	specialInt64
 	SignalNumber			int
+
 }
 
 type Type1087L1 struct {

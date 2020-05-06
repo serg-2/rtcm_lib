@@ -197,6 +197,35 @@ func parse_1087Satellite(info Type1087Satellite) Type1087SatelliteParsed {
 		}
 	}
 
+	if result.RoughRange.Special {
+		result.RealPseudorangeL1.Special = true
+		result.RealPseudorangeL1.Value = 0
+		result.RealPseudorangeL2.Special = true
+		result.RealPseudorangeL2.Value = 0
+
+	} else {
+		result.RealPseudorangeL1.Special = false
+
+		if result.L1.PseudoRangeCorrection.Special {
+			result.RealPseudorangeL1.Special = true
+			result.RealPseudorangeL1.Value = 0
+		} else {
+			result.RealPseudorangeL1.Special = false
+			pseudorangeMS1 := result.RoughRange.Value + result.L1.PseudoRangeCorrection.Value
+			result.RealPseudorangeL1.Value = pseudorangeMS1 * 299792.458
+		}
+
+		if result.L2.PseudoRangeCorrection.Special {
+			result.RealPseudorangeL2.Special = true
+			result.RealPseudorangeL2.Value = 0
+		} else {
+			result.RealPseudorangeL2.Special = false
+			pseudorangeMS2 := result.RoughRange.Value + result.L2.PseudoRangeCorrection.Value
+			result.RealPseudorangeL2.Value = pseudorangeMS2 * 299792.458
+		}
+
+	}
+
 	return result
 }
 
