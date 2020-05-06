@@ -231,7 +231,7 @@ func Decode_1087_satellite(message string, currentNumber int, quantSatellites in
 	shift += 10*quantSatellites
 
 	//GNSS Satellite rough PhaseRangeRates
-	info.RoughPhaseRange = D_DF399(message[shift+currentNumber*14:shift+currentNumber*14+14])
+	info.RatePhaseRangeInt = D_DF399(message[shift+currentNumber*14:shift+currentNumber*14+14])
 
 	return info
 }
@@ -241,11 +241,11 @@ func Decode_1087_signal(message string, currentNumber int, quantSignals int) Typ
 	var shift int
 
 	// GNSS signal fine Pseudoranges with extended resolution
-	info.RangeInt = D_DF405(message[currentNumber*20:currentNumber*20+20])
+	info.PseudoRangeCorrection = D_DF405(message[currentNumber*20:currentNumber*20+20])
 	shift += 20*quantSignals
 
 	//GNSS signal fine PhaseRange data with extended resolution
-	info.PhaseRange = D_DF406(message[shift+currentNumber*24:shift+currentNumber*24+24])
+	info.PhaseRangeCorrection = D_DF406(message[shift+currentNumber*24:shift+currentNumber*24+24])
 	shift += 24*quantSignals
 
 	// GNSS PhaseRange Lock Time Indicator with extended range and resolution.
@@ -261,7 +261,7 @@ func Decode_1087_signal(message string, currentNumber int, quantSignals int) Typ
 	shift += 10*quantSignals
 
 	//GNSS signal fine PhaseRangeRates
-	info.PhaseRangeRate = D_DF404(message[shift+currentNumber*15:shift+currentNumber*15+15])
+	info.RatePhaseRangeRemainder = D_DF404(message[shift+currentNumber*15:shift+currentNumber*15+15])
 
 	return info
 }

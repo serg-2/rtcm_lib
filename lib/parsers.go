@@ -177,7 +177,7 @@ func parse_1087Satellite(info Type1087Satellite) Type1087SatelliteParsed {
 
 	//RoughPhaseRange
 	// DF399
-	result.RoughPhaseRange = info.RoughPhaseRange
+	result.RatePhaseRangeInt = info.RatePhaseRangeInt
 
 	// SatelliteNumber
 	result.SatelliteNumber = info.SatelliteNumber
@@ -206,22 +206,22 @@ func parse_1087SignalsL1(info Type1087Signal) Type1087L1 {
 
 	//RangeInt
 	//DF405
-	if info.RangeInt.Special {
-		result.RangeInt.Special = true
-		result.RangeInt.Value = 0
+	if info.PseudoRangeCorrection.Special {
+		result.PseudoRangeCorrection.Special = true
+		result.PseudoRangeCorrection.Value = 0
 	} else {
-		result.RangeInt.Special = false
-		result.RangeInt.Value = float64(info.RangeInt.Value) * math.Pow(2,-29)
+		result.PseudoRangeCorrection.Special = false
+		result.PseudoRangeCorrection.Value = float64(info.PseudoRangeCorrection.Value) * math.Pow(2,-29)
 	}
 
 	//PhaseRange
 	//DF406
-	if info.PhaseRange.Special {
-		result.PhaseRange.Special = true
-		result.PhaseRange.Value = 0
+	if info.PhaseRangeCorrection.Special {
+		result.PhaseRangeCorrection.Special = true
+		result.PhaseRangeCorrection.Value = 0
 	} else {
-		result.PhaseRange.Special = false
-		result.PhaseRange.Value = float64(info.PhaseRange.Value) * math.Pow(2,-31)
+		result.PhaseRangeCorrection.Special = false
+		result.PhaseRangeCorrection.Value = float64(info.PhaseRangeCorrection.Value) * math.Pow(2,-31)
 	}
 
 	//PhaseRangeTI
@@ -269,12 +269,12 @@ func parse_1087SignalsL1(info Type1087Signal) Type1087L1 {
 	//sum of this field and the Satellite Rough Phase Range Rate (DF399).
 	//A bit pattern equivalent to 4000h (–1.6384 m/s) indicates invalid value
 	// m/s
-	if info.PhaseRangeRate.Special {
-		result.PhaseRangeRate.Special = true
-		result.PhaseRangeRate.Value = 0
+	if info.RatePhaseRangeRemainder.Special {
+		result.RatePhaseRangeRemainder.Special = true
+		result.RatePhaseRangeRemainder.Value = 0
 	} else {
-		result.PhaseRangeRate.Special = false
-		result.PhaseRangeRate.Value = float64(info.PhaseRangeRate.Value) * 0.0001
+		result.RatePhaseRangeRemainder.Special = false
+		result.RatePhaseRangeRemainder.Value = float64(info.RatePhaseRangeRemainder.Value) * 0.0001
 	}
 
 
@@ -295,22 +295,22 @@ func parse_1087SignalsL2(info Type1087Signal) Type1087L2 {
 
 	//RangeInt
 	//DF405
-	if info.RangeInt.Special {
-		result.RangeInt.Special = true
-		result.RangeInt.Value = 0
+	if info.PseudoRangeCorrection.Special {
+		result.PseudoRangeCorrection.Special = true
+		result.PseudoRangeCorrection.Value = 0
 	} else {
-		result.RangeInt.Special = false
-		result.RangeInt.Value = float64(info.RangeInt.Value) * math.Pow(2,-29)
+		result.PseudoRangeCorrection.Special = false
+		result.PseudoRangeCorrection.Value = float64(info.PseudoRangeCorrection.Value) * math.Pow(2,-29)
 	}
 
 	//PhaseRange
 	//DF406
-	if info.PhaseRange.Special {
-		result.PhaseRange.Special = true
-		result.PhaseRange.Value = 0
+	if info.PhaseRangeCorrection.Special {
+		result.PhaseRangeCorrection.Special = true
+		result.PhaseRangeCorrection.Value = 0
 	} else {
-		result.PhaseRange.Special = false
-		result.PhaseRange.Value = float64(info.PhaseRange.Value) * math.Pow(2,-31)
+		result.PhaseRangeCorrection.Special = false
+		result.PhaseRangeCorrection.Value = float64(info.PhaseRangeCorrection.Value) * math.Pow(2,-31)
 	}
 
 	//PhaseRangeTI
@@ -358,12 +358,12 @@ func parse_1087SignalsL2(info Type1087Signal) Type1087L2 {
 	//sum of this field and the Satellite Rough Phase Range Rate (DF399).
 	//A bit pattern equivalent to 4000h (–1.6384 m/s) indicates invalid value
 	// m/s
-	if info.PhaseRangeRate.Special {
-		result.PhaseRangeRate.Special = true
-		result.PhaseRangeRate.Value = 0
+	if info.RatePhaseRangeRemainder.Special {
+		result.RatePhaseRangeRemainder.Special = true
+		result.RatePhaseRangeRemainder.Value = 0
 	} else {
-		result.PhaseRangeRate.Special = false
-		result.PhaseRangeRate.Value = float64(info.PhaseRangeRate.Value) * 0.0001
+		result.RatePhaseRangeRemainder.Special = false
+		result.RatePhaseRangeRemainder.Value = float64(info.RatePhaseRangeRemainder.Value) * 0.0001
 	}
 
 

@@ -236,7 +236,7 @@ type Type1087SatelliteParsed struct {
 
 	// DF399
 	// GNSS Satellite rough PhaseRangeRates CONVERTED from int
-	RoughPhaseRange		specialInt64
+	RatePhaseRangeInt	specialInt64
 
 	SatelliteNumber		int
 
@@ -252,48 +252,48 @@ type Type1004Satellite struct {
 }
 
 type Type1087Satellite struct {
-	RoughRangeInt		uint64
-	Info				uint64
-	RoughRangeRemainder	uint64
-	RoughPhaseRange		specialInt64
+	RoughRangeInt			uint64
+	Info					uint64
+	RoughRangeRemainder		uint64
+	RatePhaseRangeInt		specialInt64
 	// External from mask
-	SatelliteNumber		int
-	Signals				[]Type1087Signal
+	SatelliteNumber			int
+	Signals					[]Type1087Signal
 }
 
 type Type1087Signal struct {
 	// GNSS signal fine Pseudoranges with extended resolution
-	RangeInt			specialInt64
-	PhaseRange			specialInt64
-	PhaseRangeTI		uint64
-	AI 					uint64
-	CNR					uint64
-	PhaseRangeRate		specialInt64
-	SignalNumber		int
+	PseudoRangeCorrection	specialInt64
+	PhaseRangeCorrection	specialInt64
+	PhaseRangeTI			uint64
+	AI 						uint64
+	CNR						uint64
+	RatePhaseRangeRemainder	specialInt64
+	SignalNumber			int
 }
 
 type Type1087L1 struct {
 	// GNSS signal fine Pseudoranges with extended resolution
-	RangeInt			Specialfloat64
-	PhaseRange			Specialfloat64
-	PhaseRangeTI		uint64
-	AI 					string
-	CNR					float64
-	PhaseRangeRate		Specialfloat64
+	PseudoRangeCorrection	Specialfloat64
+	PhaseRangeCorrection	Specialfloat64
+	PhaseRangeTI			uint64
+	AI 						string
+	CNR						float64
+	RatePhaseRangeRemainder	Specialfloat64
 	// Added from UP
-	Signal				string
+	Signal					string
 }
 
 type Type1087L2 struct {
 	// GNSS signal fine Pseudoranges with extended resolution
-	RangeInt			Specialfloat64
-	PhaseRange			Specialfloat64
-	PhaseRangeTI		uint64
-	AI 					string
-	CNR					float64
-	PhaseRangeRate		Specialfloat64
+	PseudoRangeCorrection	Specialfloat64
+	PhaseRangeCorrection	Specialfloat64
+	PhaseRangeTI			uint64
+	AI 						string
+	CNR						float64
+	RatePhaseRangeRemainder	Specialfloat64
 	// Added from UP
-	Signal				string
+	Signal					string
 }
 
 type Type1012Satellite struct {
