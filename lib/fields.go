@@ -66,6 +66,16 @@ func EInt (num int64, numbits int, special bool) string {
 
 
 //===========1012 HEADER==========
+func D_DF001 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF001 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}
+
 func D_DF002 (field string) uint64 {
 	// 12bits
 	return DUint(field, 12)
@@ -166,6 +176,78 @@ func E_DF011 (num uint64) string {
 	return EUint(num, 24)
 }
 
+func D_DF021 (field string) uint64 {
+	// 6bit
+	return DUint(field, 6)
+}
+
+func E_DF021 (num uint64) string {
+	// 6bit
+	return EUint(num, 6)
+}
+
+func D_DF022 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF022 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}
+
+func D_DF023 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF023 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}
+
+func D_DF024 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF024 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}
+
+func D_DF025 (field string) specialInt64 {
+	// 38bits
+	result, special :=  DInt(field, 38)
+	return specialInt64{result,special}
+}
+
+func E_DF025 (num specialInt64) string {
+	// 38bits
+	return EInt(num.Value, 38, num.Special)
+}
+
+func D_DF026 (field string) specialInt64 {
+	// 38bits
+	result, special :=  DInt(field, 38)
+	return specialInt64{result,special}
+}
+
+func E_DF026 (num specialInt64) string {
+	// 38bits
+	return EInt(num.Value, 38, num.Special)
+}
+
+func D_DF027 (field string) specialInt64 {
+	// 38bits
+	result, special :=  DInt(field, 38)
+	return specialInt64{result,special}
+}
+
+func E_DF027 (num specialInt64) string {
+	// 38bits
+	return EInt(num.Value, 38, num.Special)
+}
 
 func D_DF035 (field string) uint64 {
 	// 5bits
@@ -345,6 +427,16 @@ func E_DF046 (num uint64) string {
 	return EUint(num, 2)
 }
 
+func D_DF364 (field string) uint64 {
+	// 2bits
+	return DUint(field, 2)
+}
+
+func E_DF364 (num uint64) string {
+	// 2bits
+	return EUint(num, 2)
+}
+
 func D_DF016 (field string) uint64 {
 	// 2bits
 	return DUint(field, 2)
@@ -377,6 +469,25 @@ func E_DF017 (num specialInt64) string {
 	return EInt(num.Value, 14, num.Special)
 }
 
+func D_DF141 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF141 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}
+
+func D_DF142 (field string) uint64 {
+	// 1bit
+	return DUint(field, 1)
+}
+
+func E_DF142 (num uint64) string {
+	// 1bit
+	return EUint(num, 1)
+}
 
 func D_DF048 (field string) specialInt64 {
 	// 20bits

@@ -129,6 +129,8 @@ type Type1012Parsed struct {
 
 }
 
+
+
 type Type1004Parsed struct {
 	//from gpsdecode
 	Class			string
@@ -146,6 +148,17 @@ type Type1004Parsed struct {
 	Satellites		[]Type1004Satellite
 
 }
+
+type Type1005Parsed struct {
+	Long			float64
+	Lat				float64
+	Height			float64
+	// to compatibility
+	StationId		uint64
+
+}
+
+
 
 type Type1087 struct {
 	//header part ------------------------

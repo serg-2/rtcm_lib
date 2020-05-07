@@ -59,15 +59,28 @@ func EncodeMessage (messageType int, messagePassed interface{})string {
 		for len(body) % 8 != 0 {
 			body += "0"
 		}
+	case 1005:
+		message := messagePassed.(Type1005Parsed)
+		body = Endode_1005(message)
+
+		header_1005 := Encode_CommonHeader(1005)
+		body = header_1005 + body
+		// Fill Zeroes to end of byte
+		// deprecated as 152 bits = 19 bytes
 
 	}
+
 	// Check message too big
 	if len(body) > 1023*8{
 		log.Fatalf("Bad message length!\n")
 	}
+
+
 	length := fmt.Sprintf("%010b", len(body) / 8)
 
 	encoded = encoded + length + body
+
+
 
 	crc := GenerateCRC(encoded)
 

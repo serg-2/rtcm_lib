@@ -2,6 +2,7 @@ package rtcmlib
 
 import (
 	"fmt"
+	"math"
 )
 
 func Endode_1012(info Type1012) string {
@@ -32,6 +33,78 @@ func Endode_1004(info Type1004) string{
 	result += E_DF019(info.L2Lt) + E_DF020(info.L2CNR)
 	return result
 }
+
+func Endode_1005(info Type1005Parsed) string{
+	var result string
+	// Convert Lat, Long, Height to ECEF x,y,z
+	lat := info.Lat * ( math.Pi / 180 )
+	long := info.Long * ( math.Pi / 180 )
+
+	// a - equatorial radius- semi-major axis. b polar radius -semi-minor axis
+	a := float64(6378137)
+	b := float64(6356752.3)
+	e2 := 1 - ((b*b)/(a*a))
+	N := a / (math.Sqrt(1 - ((e2*math.Sin(lat)*math.Sin(lat)))))
+	x := (N + info.Height) * math.Cos(lat) * math.Cos(long)
+	y := (N + info.Height) * math.Cos(lat) * math.Sin(long)
+	z := ((N*(1 - e2)) + info.Height ) * math.Sin(lat)
+
+	ecef_x := int64(math.Round(x/0.0001))
+	ecef_y := int64(math.Round(y/0.0001))
+	ecef_z := int64(math.Round(z/0.0001))
+
+	// Station ID
+	result += E_DF003(info.StationId)
+	// ITRF Reazliation Year
+	result += E_DF021(0)
+	// Support gps?
+	result += E_DF022(1)
+	// SUpport glonass
+	result += E_DF023(1)
+	//support galileo
+	result += E_DF024(0)
+	//Reference-Station Indicator
+	//0 - Real, Physical Reference Station
+	//1 - Non-Physical or Computed Reference Station
+	result += E_DF141(0)
+	// ECEF_X
+	result += E_DF025(specialInt64{ecef_x, false})
+	// Single Receiver Oscillator Indicator
+	// 0 - All raw data observations in messages 1001-1004 and 1009-1012
+	//may be measured at different instants. This indicator should be set
+	//to “0” unless all the conditions for “1” are clearly met.
+	//1 - All raw data observations in messages 1001-1004 and 1009-1012
+	//are measured at the same instant
+	result += E_DF142(1)
+	// Reserved
+	result += E_DF001(0)
+	// ECEF_Y
+	result += E_DF026(specialInt64{ecef_y, false})
+	// The Quarter Cycle Indicator denotes whether different carrier phase
+	//signals tracked on the same frequency have a common phase, i.e.
+	//whether or not the fractional PhaseRanges of two signals on the same
+	//frequency show a quarter cycle difference
+	// 00 - Correction status unspecified
+	//01 - PhaseRanges in Message Types 1001, 1002, 1003, 1004, 1009,
+	//1010, 1011, 1012 are corrected in such a way that whenever
+	//PhaseRanges for different signals on the same frequency are
+	//present in these messages, they are guaranteed to be in phase and
+	//thus shall show no Quarter-Cycle bias between them (see Table
+	//3.1-5 for details on the adjustments made). Double differences of
+	//PhaseRanges tracked with different signals shall show no Quarter-
+	//Cycle differences.
+	//10 - Phase observations are not corrected. Double differences may
+	//show Quarter-Cycle differences for PhaseRanges based on different
+	//signals on the same frequency. Processing will require appropriate
+	//corrections.
+	//11 – Reserved
+	result += E_DF364(0)
+	// ECEF_Z
+	result += E_DF027(specialInt64{ecef_z, false})
+
+	return result
+}
+
 
 func Endode_1012_Header(info Type1012Header) string{
 	return  E_DF003(info.StationId) + E_DF034(info.Epoch) +
